@@ -7,28 +7,39 @@ namespace Orders
         public List<Order> ReadOrdersFromFile(string filePath)
         {
             var orders = new List<Order>();
-            foreach (var line in File.ReadLines(filePath))
+            try
             {
-                var parts = line.Split(',');
-                if (parts.Length != 4)
+                string allText = File.ReadAllText(filePath);
+                var parts = allText.Split(',');
+
+                // проверяем, что количество частей кратно 4 т.к. каждая запись состоит из 4 частей
+                if (parts.Length % 4 != 0)
                 {
-                    Log("Invalid data format");
-                    continue;
+                    Log("Invalid data format: incorrect number of fields.");
+
+                    return orders;
                 }
 
-                if (!double.TryParse(parts[1], out double weight) || !DateTime.TryParse(parts[3], out DateTime deliveryTime))
+                for (int i = 0; i < parts.Length; i += 4)
                 {
-                    Log("Invalid data format");
-                    continue;
-                }
+                    if (!double.TryParse(parts[i + 1], out double weight) || !DateTime.TryParse(parts[i + 3], out DateTime deliveryTime))
+                    {
+                        Log("Invalid data format: unable to parse weight or delivery time.");
+                        continue;
+                    }
 
-                orders.Add(new Order
-                {
-                    OrderId = parts[0],
-                    Weight = weight,
-                    District = parts[2],
-                    DeliveryTime = deliveryTime
-                });
+                    orders.Add(new Order
+                    {
+                        OrderId = parts[i],
+                        Weight = weight,
+                        District = parts[i + 2],
+                        DeliveryTime = deliveryTime
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Error reading file: {ex.Message}");
             }
 
             return orders;
