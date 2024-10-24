@@ -47,9 +47,9 @@ namespace Orders
 
         public List<Order> FilterOrders(List<Order> orders, string district, DateTime firstDeliveryTime)
         {
-            DateTime endTime = firstDeliveryTime.AddMinutes(30);
+            DateTime endTime = firstDeliveryTime.AddMinutes(30); // 30 минут после первого заказа
 
-            return orders.Where(o => o.District == district && o.DeliveryTime >= firstDeliveryTime && o.DeliveryTime <= endTime).ToList();
+            return orders.Where(x => x.District == district && x.DeliveryTime >= firstDeliveryTime && x.DeliveryTime <= endTime).ToList();
         }
 
         public void Log(string message)
@@ -81,7 +81,7 @@ namespace Orders
                 var orders = ReadOrdersFromFile(ordersFilePath);
                 var filteredOrders = FilterOrders(orders, district, firstDeliveryTime);
 
-                File.WriteAllLines(resultFilePath, filteredOrders.Select(o => $"{o.OrderId},{o.Weight},{o.District},{o.DeliveryTime}"));
+                File.WriteAllLines(resultFilePath, filteredOrders.Select(x => $"{x.OrderId},{x.Weight},{x.District},{x.DeliveryTime}"));
                 Log("Filtering completed successfully.");
             }
             catch (Exception ex)
