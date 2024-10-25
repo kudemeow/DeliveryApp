@@ -2,7 +2,7 @@
 
 namespace Orders
 {
-    internal class DeliveryApp
+    internal class DeliveryApp : IDeliveryApp
     {
         public List<Order> ReadOrdersFromFile(string filePath)
         {
